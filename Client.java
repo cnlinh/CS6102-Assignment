@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class Client {
     
     private static Scanner scanner;
+    private String response;
     
     public Client(String address, int port, int type, String value) {
         try {
@@ -20,7 +21,7 @@ public class Client {
                 ) {
                 // Send output to server
                 dOut.writeInt(type);
-                if (type == 2 || type == 3)
+                if (type == 2 || type == 3 || type == 5 || type == 6 || type == 7)
                     dOut.writeUTF(value);
                 dOut.flush();
                 // Wait for output from server
@@ -40,6 +41,13 @@ public class Client {
                                             + value + " IS " + dIn.readUTF());
                     case 2:
                         break;
+                    case 5:
+                    	break;
+                    case 6:
+                    	response = dIn.readUTF();
+                    	break;
+                    case 7:
+                    	break;
                     default:
                         System.out.println("Error: dIn.readInt() not recognised");
                 }
@@ -98,6 +106,10 @@ public class Client {
         else
             System.out.println("THIS INPUT IS NOT RECOGNISED. PLEASE TRY AGAIN.");
         return result;
+    }
+    
+    public String getResponse() {
+    	return response;
     }
     
 }

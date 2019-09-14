@@ -1,15 +1,18 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Server {
-    
+
     private HashMap<String, Integer> hashMap = new HashMap<>();
+    private HashMap<String, String[]> directorySystem = new HashMap<>();
     
     public Server(int port) {
         try {
@@ -43,6 +46,38 @@ public class Server {
                             // Read value from hashmap
                             result = "" + hashMap.getOrDefault(dIn.readUTF(), 0);
                             break;
+                        case 5: 
+                        	// update directory system (hashmap) / join
+                        	String peerfiles = dIn.readUTF();
+                        	String peer = peerfiles.split("        ")[0];
+                        	String[] filenames = peerfiles.split("        ")[1].split(" ");
+                        	directorySystem.put(peer, filenames);
+                        	System.out.println("directorySystem: " + directorySystem.toString());
+                        	break;
+                        case 6: 
+                        	// search directory system (hashmap)
+                        	String filename = dIn.readUTF();
+                        	// server search directory
+                        	for (String key: directorySystem.keySet()) {
+                        		for (String s : directorySystem.get(key)) {
+                        			// respond with IP addresses of nodes that have a copy of the file.
+                        			if (s.contentEquals(filename)) {
+                        				result += key + " ";
+                        				break;
+                        			}
+                        		}
+                        	}
+                        	if (result.isEmpty()) {// key is address so should not be empty
+                        		result = "NOT FOUND";
+                        	}
+                        	break;
+                        case 7:
+                        	// remove node when leave
+                        	String address = dIn.readUTF();
+                        	System.out.println("tetsing");
+                        	directorySystem.remove(address);
+                        	System.out.println("directorySystem: " + directorySystem.toString());
+                        	break;
                         default:
                             System.out.println("Error: dIn.readInt() not recognised");
                     }
@@ -57,6 +92,10 @@ public class Server {
         }
         catch(IOException i) { System.out.println(i); }
         finally { System.out.println("Server ended"); }
+    }
+    
+    public void removeNode(String address) {
+    	directorySystem.remove(address);
     }
     
     public static void main(String[] args) {
