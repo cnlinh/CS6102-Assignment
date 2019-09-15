@@ -18,6 +18,16 @@ public class Node {
 		return address;
 	}
 
+	public static void displayNodes() {
+		if (nodes.size() == 0) {
+			System.out.println("NO NODES EXIST");
+			return;
+		}
+		for (Node n : nodes.values()) {
+			System.out.println(n);
+		}
+	}
+
 	public ArrayList<File> getFiles() {
 		return files;
 	}
@@ -25,11 +35,12 @@ public class Node {
 	public static File requestFile(Node requester, Node source, String filename) {
 		// requester contact source to download file
 		// assume accept all download requests
-		System.out.println(
-				"PEER AT " + requester.address + " CONTACTS NODE AT " + source.address + " TO DOWNLOAD FILE " 
-						+ filename + ".");
+		System.out.println("PEER AT " + requester.address + " CONTACTS NODE AT " + source.address + " TO DOWNLOAD FILE "
+				+ filename + ".");
 		for (File f : source.files) {
 			if (f.getName().contentEquals(filename)) {
+				requester.files.add(f);
+				System.out.println("FILE SUCCESSFULLY DOWNLOADED");
 				return f;
 			}
 		}

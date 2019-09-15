@@ -21,7 +21,7 @@ public class Client {
                 ) {
                 // Send output to server
                 dOut.writeInt(type);
-                if (type == 2 || type == 3 || type == 5 || type == 6 || type == 7)
+                if (type == 2 || type == 3 || type == 5 || type == 6 || type == 7 || type == 8)
                     dOut.writeUTF(value);
                 dOut.flush();
                 // Wait for output from server
@@ -47,6 +47,9 @@ public class Client {
                     	response = dIn.readUTF();
                     	break;
                     case 7:
+                    	break;
+                    case 8:
+                    	response = dIn.readUTF();
                     	break;
                     default:
                         System.out.println("Error: dIn.readInt() not recognised");
